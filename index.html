@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-gNBFvMDv9ATKxIep9tiCxTzqgDYYVYZZP0FcXAg0Em0F3n7H7F0CruO8F9X12LT6" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.5s ease;
+        }
+
+        .weather-container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.5s ease;
+        }
+
+        h1 {
+            color: #3498db;
+        }
+
+        label {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #weatherInfo {
+            margin-top: 20px;
+        }
+
+        p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        /* Additional Styling based on Weather Conditions */
+        .clear-sky { background-color: #87CEEB; }
+        .clouds { background-color: #B0C4DE; }
+        .rain { background-color: #4682B4; }
+        .thunderstorm { background-color: #1E90FF; }
+    </style>
+</head>
+<body>
+    <div class="weather-container">
+        <h1>Weather App</h1>
+        <label for="locationInput">Enter City or Zip Code: </label>
+        <input type="text" id="locationInput">
+        <button onclick="getWeather()">Get Weather</button>
+
+        <div id="weatherInfo"></div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const apiKey = '17ec05dbfa4affdb3479feb37efcef1e'; // Replace with your OpenWeatherMap API key
+            const locationInput = document.getElementById('locationInput').value;
+
+            if (!locationInput) {
+                alert('Please enter a city or zip code.');
+                return;
+            }
+
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${locationInput}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayWeather(data);
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        }
+
+        function displayWeather(data) {
+            const weatherInfo = document.getElementById('weatherInfo');
+            const temperature = data.main.temp;
+            const conditions = data.weather[0].description;
+            const weatherCode = data.weather[0].main.toLowerCase();
+
+            const iconElement = document.createElement('i');
+            iconElement.className = getWeatherIconClass(weatherCode);
+
+            weatherInfo.innerHTML = `<p>Temperature: ${temperature}°C</p>
+                                     <p>Conditions: ${conditions}</p>`;
+            weatherInfo.appendChild(iconElement);
+
+            updateBackground(weatherCode);
+        }
+
+        function updateBackground(weatherCode) {
+            const container = document.querySelector('.weather-container');
+            container.classList = '';
+            container.classList.add('weather-container', weatherCode);
+        }
+
+        function getWeatherIconClass(weatherCode) {
+            switch (weatherCode) {
+                case 'clear-sky':
+                    return '<i class="fa-sharp fa-solid fa-sun fa-rotate-90 fa-xl" style="color: #ffd500;"></i>';
+                case 'clouds':
+                    return '<i class="fa-sharp fa-solid fa-sun fa-rotate-90 fa-xl" style="color: #ffd500;"></i>';
+                case 'rain':
+                    return '<i class="fa-sharp fa-solid fa-sun fa-rotate-90 fa-xl" style="color: #ffd500;"></i>';
+                case 'thunderstorm':
+                    return '<i class="fa-sharp fa-solid fa-sun fa-rotate-90 fa-xl" style="color: #ffd500;"></i>';
+                default:
+                    return '<i class="fa-sharp fa-solid fa-sun fa-rotate-90 fa-xl" style="color: #ffd500;"></i>';
+            }
+        }
+    </script>
+</body>
+</html>
